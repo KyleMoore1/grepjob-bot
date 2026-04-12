@@ -2,8 +2,6 @@
 
 Auto-fill software engineering job applications across Greenhouse, Lever, and Ashby from inside Claude Code. Tell Claude "apply to some backend roles in NYC," and it searches, fills the forms, verifies each submission lands on a confirmation page, and logs every application to a CSV you control.
 
-> ⚠️ Early preview. Expect rough edges.
-
 ## What you get
 
 - A **Chrome extension** that drives form filling on job application pages.
