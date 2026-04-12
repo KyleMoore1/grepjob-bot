@@ -1,0 +1,40 @@
+{
+  "manifest_version": 3,
+  "name": "GrepJob Autofill Bridge",
+  "version": "0.2.0",
+  "description": "Fills job application forms via MCP commands from Claude",
+  "permissions": [
+    "activeTab",
+    "tabs",
+    "scripting",
+    "alarms",
+    "debugger"
+  ],
+  "host_permissions": [
+    "https://jobs.ashbyhq.com/*",
+    "https://boards.greenhouse.io/*",
+    "https://job-boards.greenhouse.io/*",
+    "https://boards.eu.greenhouse.io/*",
+    "https://job-boards.eu.greenhouse.io/*",
+    "https://jobs.lever.co/*",
+    "https://jobs.eu.lever.co/*"
+  ],
+  "background": {
+    "service_worker": "service-worker.js"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "https://jobs.ashbyhq.com/*",
+        "https://boards.greenhouse.io/*",
+        "https://job-boards.greenhouse.io/*",
+        "https://boards.eu.greenhouse.io/*",
+        "https://job-boards.eu.greenhouse.io/*",
+        "https://jobs.lever.co/*",
+        "https://jobs.eu.lever.co/*"
+      ],
+      "js": ["content.js"],
+      "run_at": "document_idle"
+    }
+  ]
+}

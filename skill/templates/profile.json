@@ -1,0 +1,56 @@
+{
+  "name": "Your Full Name",
+  "first_name": "First",
+  "last_name": "Last",
+  "preferred_name": "First",
+  "email": "you@example.com",
+  "phone": "+1 555-555-5555",
+  "phone_country_code": "+1",
+  "pronouns": "they/them",
+  "linkedin": "https://www.linkedin.com/in/your-handle/",
+  "github": "https://github.com/your-handle",
+  "portfolio": "https://yourwebsite.com",
+  "website": "https://yourwebsite.com",
+  "twitter": "",
+  "location": "New York, NY",
+  "address": {
+    "street": "",
+    "city": "New York",
+    "state": "NY",
+    "postal_code": "10001",
+    "country": "United States"
+  },
+  "current_company": "Your Current Employer",
+  "current_title": "Your Current Title",
+  "years_of_experience": 5,
+  "us_citizen": true,
+  "authorized_to_work_in_us": true,
+  "requires_sponsorship": false,
+  "referral_source": "LinkedIn",
+  "salary_expectations": "Open to discuss",
+  "resume_path": "/Users/yourname/Documents/Resume.pdf",
+  "cover_letter_path": null,
+  "eeo_gender": "Decline to self-identify",
+  "eeo_race": "Decline to self-identify",
+  "eeo_veteran": "Decline to self-identify",
+  "eeo_disability": "Decline to self-identify",
+  "eeo_hispanic_latino": "Decline to self-identify",
+  "education": [
+    {
+      "school": "Your University",
+      "degree": "Bachelor's Degree",
+      "discipline": "Computer Science",
+      "start_year": 2017,
+      "end_year": 2021
+    }
+  ],
+  "employment": [
+    {
+      "company": "Your Current Employer",
+      "title": "Your Current Title",
+      "start_date": "2023-01",
+      "end_date": null,
+      "current": true
+    }
+  ]
+}

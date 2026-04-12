@@ -1,0 +1,30 @@
+# Build artifacts
+mcp/src/node_modules/
+mcp/src/package-lock.json
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editors
+.vscode/
+.idea/
+*.swp
+*~
+
+# Logs
+*.log
+npm-debug.log*
+
+# Test / temp
+/tmp/
+/.cache/
+
+# Personal data — should never be in the repo
+profile.json
+applications.csv
+
+# Exceptions: the template files in skill/templates/ are safe to commit
+# (they contain placeholder values, not real PII).
+!skill/templates/profile.json
+!skill/templates/applications.csv

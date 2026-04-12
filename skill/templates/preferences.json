@@ -1,0 +1,19 @@
+{
+  "locations": ["New York, NY", "Remote (US)"],
+  "seniority": ["mid level", "senior"],
+  "sub_categories": ["Full Stack", "Backend", "Frontend"],
+  "tech_stack": ["TypeScript", "React", "Python", "Go"],
+  "min_salary": 150000,
+  "include_jobs_without_salary": true,
+  "sponsors_h1b_filter": null,
+  "avoid_companies": [],
+  "preferred_companies": [],
+  "default_application_answers": {
+    "hybrid_willing": true,
+    "remote_only": false,
+    "relocate_willing": false,
+    "open_to_travel": false,
+    "years_of_experience_bucket": "4 - 6 Years"
+  },
+  "notes_for_autofill": "Free-form notes the autofill agent can use to fill open-ended questions like 'why do you want to work here' or 'what's your most impactful project'. Keep it short and reusable. Example: I'm a software engineer at Microsoft with 5 years of experience building cloud storage products, and I'm looking for a role where I can ship product features to users."
+}
