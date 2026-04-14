@@ -14,7 +14,7 @@ The single rule you cannot break: **never record an application as submitted unl
 Before you do anything else, confirm these MCP tool prefixes are available:
 
 - `mcp__grepjob__*` — job discovery (https://grepjob.com)
-- `mcp__autofill__*` — form-fill bridge to the Chrome extension
+- `mcp__grepjob-autofill__*` — form-fill bridge to the Chrome extension
 - `mcp__claude-in-chrome__*` — page navigation and page inspection
 
 If any are missing, stop and tell the user which one is missing. Don't try to fall back — the whole skill depends on all three.
@@ -102,12 +102,12 @@ If the user asks for more options, use the `page` parameter to pull subsequent p
 When the user approves a list (or says "apply to all" / "go"), iterate through each job. For each one:
 
 1. `mcp__claude-in-chrome__navigate` to the job URL (use a dedicated tab — create one with `tabs_create_mcp` if the user hasn't indicated otherwise; reusing tabs is fine within one pipeline run).
-2. `mcp__autofill__read_form` to inspect the fields. The response lists every selector, its type, label, and options.
+2. `mcp__grepjob-autofill__read_form` to inspect the fields. The response lists every selector, its type, label, and options.
 3. Build the `fields` array for `fill_application` by mapping profile data to each form question. Use `references/field-mapping.md` for the full mapping reference. For fields you're unsure about, make your best guess based on the label and skip optional ones rather than filling garbage.
-4. Call `mcp__autofill__fill_application` with your fields array.
+4. Call `mcp__grepjob-autofill__fill_application` with your fields array.
 5. If any combobox fills failed with "no option matching X", retry just those fields using a shorter substring match (e.g. `"Decline"` instead of `"Decline To Self Identify"` — Greenhouse sometimes wants a loose match).
-6. Call `mcp__autofill__attach_resume` with the resume file input's selector (usually `#resume` on Greenhouse, `#resume-upload-input` on Lever, `#_systemfield_resume` on Ashby) — the MCP reads `resume_path` from profile.json internally.
-7. Call `mcp__autofill__click_submit`.
+6. Call `mcp__grepjob-autofill__attach_resume` with the resume file input's selector (usually `#resume` on Greenhouse, `#resume-upload-input` on Lever, `#_systemfield_resume` on Ashby) — the MCP reads `resume_path` from profile.json internally.
+7. Call `mcp__grepjob-autofill__click_submit`.
 8. **Verify the submission actually went through.** This is the critical step — see the next section.
 9. If verified, log the application with `python3 scripts/log_application.py` (see "Logging applications" below).
 10. If not verified, check for errors and try to fix. Common failures: unchecked consent/terms checkbox, unchecked GDPR demographic-data consent, missing EEO dropdown.

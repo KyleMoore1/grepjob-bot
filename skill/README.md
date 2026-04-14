@@ -150,7 +150,7 @@ Or just edit `~/.auto-apply/*.json` directly.
 
 **Skill doesn't trigger on `/auto-apply`** — restart Claude Code, and confirm the skill is at `~/.claude/skills/auto-apply/SKILL.md`.
 
-**"MCP server not available"** — double-check the three MCPs are configured in your Claude settings. Try `ls ~/.claude/settings.json` and confirm `mcp__autofill__*`, `mcp__grepjob__*`, and `mcp__claude-in-chrome__*` tools appear in the tool list.
+**"MCP server not available"** — double-check the three MCPs are configured in your Claude settings. Try `ls ~/.claude/settings.json` and confirm `mcp__grepjob-autofill__*`, `mcp__grepjob__*`, and `mcp__claude-in-chrome__*` tools appear in the tool list.
 
 **Autofill fails on every job with "content script not loaded"** — the Chrome extension isn't installed or isn't running. Open Chrome, check `chrome://extensions/` for the GrepJob autofill extension.
 

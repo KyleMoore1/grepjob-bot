@@ -58,7 +58,7 @@ echo
 echo "Next steps:"
 echo "  1. Make sure the three required MCP servers are configured:"
 echo "     - grepjob (job discovery)"
-echo "     - autofill (autofill Chrome extension bridge)"
+echo "     - grepjob-autofill (autofill Chrome extension bridge)"
 echo "     - claude-in-chrome (browser navigation)"
 echo "  2. Restart Claude Code (or reload the skill directory) so it picks up the new skill."
 echo "  3. In Claude, type: /auto-apply"

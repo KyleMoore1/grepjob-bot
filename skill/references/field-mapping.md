@@ -139,4 +139,4 @@ The field input selectors vary by ATS:
 - Lever: `#resume-upload-input`
 - Ashby: `#_systemfield_resume`
 
-Always use `mcp__autofill__attach_resume` with the selector — don't pass the file contents directly. The MCP reads the file from `profile.resume_path` on disk, so as long as that path is correct the upload works.
+Always use `mcp__grepjob-autofill__attach_resume` with the selector — don't pass the file contents directly. The MCP reads the file from `profile.resume_path` on disk, so as long as that path is correct the upload works.

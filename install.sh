@@ -43,12 +43,14 @@ echo "✓ Copied MCP to $INSTALL_DIR/mcp.mjs"
 
 # ── 2. Register the local MCP with Claude ───────────────────────────────────
 
-# Name must be 'autofill' (no hyphen) — the skill calls the tools as
-# `mcp__autofill__fill_application`, `mcp__autofill__read_form`, etc.
+# Name must be 'grepjob-autofill' — the skill calls the tools as
+# `mcp__grepjob-autofill__fill_application`, `mcp__grepjob-autofill__read_form`, etc.
 # Remove-then-add because `claude mcp add` errors if the name already exists.
+claude mcp remove grepjob-autofill --scope user >/dev/null 2>&1 || true
+# Also clean up the old name from pre-rename installs.
 claude mcp remove autofill --scope user >/dev/null 2>&1 || true
-claude mcp add autofill --scope user -- node "$INSTALL_DIR/mcp.mjs"
-echo "✓ Registered local MCP 'autofill'"
+claude mcp add grepjob-autofill --scope user -- node "$INSTALL_DIR/mcp.mjs"
+echo "✓ Registered local MCP 'grepjob-autofill'"
 
 # ── 3. Register the remote grepjob search MCP ───────────────────────────────
 
