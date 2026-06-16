@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// Standalone preflight for grepjob-autofill.
+// Standalone preflight for grepjob-bot.
 //
 // Zero dependencies, so it runs even when the MCP server is down (an MCP tool
 // could never tell you the MCP itself is broken). All paths resolve relative to
@@ -8,7 +8,7 @@
 //   node doctor.mjs          human-readable report
 //   node doctor.mjs --json    machine-readable: { ok, onboardingNeeded, checks }
 //
-// The auto-apply skill runs the --json form at the start of every session.
+// The grepjob-bot skill runs the --json form at the start of every session.
 
 import { existsSync, readFileSync, accessSync, constants } from "fs";
 import { dirname, join, isAbsolute } from "path";
@@ -46,7 +46,7 @@ if (!existsSync(profilePath)) {
     "Profile created",
     "fail",
     `missing ${rel(profilePath)}`,
-    "Run /auto-apply in Claude to set up your profile"
+    "Run /grepjob-bot in Claude to set up your profile"
   );
 } else {
   try {
@@ -65,7 +65,7 @@ if (!existsSync(profilePath)) {
         "Profile valid",
         "fail",
         `missing ${missing}`,
-        "Re-run /auto-apply onboarding"
+        "Re-run /grepjob-bot onboarding"
       );
     }
   } catch (e) {
@@ -74,7 +74,7 @@ if (!existsSync(profilePath)) {
       "Profile valid",
       "fail",
       `not valid JSON (${e.message})`,
-      "Fix config/profile.json or re-run /auto-apply onboarding"
+      "Fix config/profile.json or re-run /grepjob-bot onboarding"
     );
   }
 }
@@ -169,7 +169,7 @@ if (JSON_MODE) {
   console.log(JSON.stringify({ ok: !anyFail, onboardingNeeded, checks }, null, 2));
 } else {
   const icon = { ok: "✓", warn: "!", fail: "✗" };
-  console.log("\ngrepjob-autofill doctor\n");
+  console.log("\ngrepjob-bot doctor\n");
   for (const c of checks) {
     console.log(
       `  ${icon[c.status]} ${c.label}${c.detail ? "  — " + c.detail : ""}`
@@ -178,7 +178,7 @@ if (JSON_MODE) {
   }
   console.log(
     `\n${anyFail ? "Some checks need attention." : "All good."}` +
-      `${onboardingNeeded ? " Run /auto-apply in Claude to finish setup." : ""}\n`
+      `${onboardingNeeded ? " Run /grepjob-bot in Claude to finish setup." : ""}\n`
   );
 }
 

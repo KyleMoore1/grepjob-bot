@@ -2,7 +2,7 @@
 # search.yml — your persistent job-search parameters
 #
 # Onboarding copies this file to config/search.yml. Edit that copy by hand any
-# time to retune what gets found and how applications are filled; the auto-apply
+# time to retune what gets found and how applications are filled; the grepjob-bot
 # skill reads it on every "find jobs" run. None of this is PII, but search.yml is
 # gitignored so your tuning stays on your machine.
 #

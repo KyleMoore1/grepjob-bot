@@ -1,6 +1,6 @@
 # Privacy
 
-This document describes exactly what data the grepjob-autofill system reads, where it goes, and what does not happen with it.
+This document describes exactly what data the grepjob-bot system reads, where it goes, and what does not happen with it.
 
 ## What's stored on your machine
 
@@ -11,7 +11,7 @@ All of your personal data lives in files on your own computer:
 - `data/applications.csv` — one row per application you've submitted: date, company, role, URL, status.
 - `config/resume.pdf` — your resume.
 
-All of these live inside the cloned `grepjob-autofill` folder on your computer, and every one is gitignored — they are never committed, pushed, or uploaded anywhere by this software. They are read and written only by the Claude skill and the local MCP server running on your machine.
+All of these live inside the cloned `grepjob-bot` folder on your computer, and every one is gitignored — they are never committed, pushed, or uploaded anywhere by this software. They are read and written only by the Claude skill and the local MCP server running on your machine.
 
 ## What leaves your machine
 
@@ -53,4 +53,4 @@ The extension requests:
 
 ## Questions or concerns
 
-File an issue at [github.com/KyleMoore1/grepjob-autofill](https://github.com/KyleMoore1/grepjob-autofill).
+File an issue at [github.com/KyleMoore1/grepjob-bot](https://github.com/KyleMoore1/grepjob-bot).

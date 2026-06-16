@@ -1,4 +1,4 @@
-# grepjob-autofill
+# grepjob-bot
 
 Auto-fill software engineering job applications across Greenhouse, Lever, and Ashby from inside Claude Code. Tell Claude "apply to some backend roles in NYC," and it searches, fills the forms, verifies each submission lands on a confirmation page, and logs every application to a CSV you control.
 
@@ -6,7 +6,7 @@ Auto-fill software engineering job applications across Greenhouse, Lever, and As
 
 ## What you get
 
-- An **auto-apply skill** (`/auto-apply`) — onboards you from your resume, finds jobs, fills + submits applications, verifies each one, and tracks them.
+- An **grepjob-bot skill** (`/grepjob-bot`) — onboards you from your resume, finds jobs, fills + submits applications, verifies each one, and tracks them.
 - A **local MCP server** (`mcp/mcp.mjs`) — bridges Claude to the Chrome extension over a localhost WebSocket and stores/validates your profile and application log.
 - A **Chrome extension** (`chrome-extension/`) — fills the form fields on the application page.
 - A **remote MCP** (`grepjob`) — searches jobs matching your saved parameters.
@@ -20,8 +20,8 @@ Optional but recommended: the **Claude in Chrome** browser extension, which lets
 ## Setup
 
 ```bash
-git clone https://github.com/KyleMoore1/grepjob-autofill
-cd grepjob-autofill
+git clone https://github.com/KyleMoore1/grepjob-bot
+cd grepjob-bot
 claude
 ```
 
@@ -36,7 +36,7 @@ Then load the Chrome extension once:
 Finally, in Claude:
 
 ```
-/auto-apply
+/grepjob-bot
 ```
 
 On first run it checks your setup and walks you through onboarding: point it at your resume PDF and it pre-fills most of your profile from it, then asks the handful of things resumes never contain (pronouns, work authorization, EEO preferences, optional address, referral source). It saves everything into the repo and verifies the setup before you apply.
@@ -48,7 +48,7 @@ Want to confirm your install at any time? Run `node doctor.mjs`.
 ```
 you: find me some backend roles in NYC and apply to the good ones
 
-claude (auto-apply skill):
+claude (grepjob-bot skill):
   → searches the grepjob MCP with your saved parameters
   → filters out jobs already in applications.csv and companies on your
     avoid list
@@ -104,12 +104,12 @@ Delete the clone and remove the extension from `chrome://extensions`. There's no
 
 Run **`node doctor.mjs`** first — it checks Node, your profile, resume, search params, and the MCP bridge, and prints the exact fix for anything wrong.
 
-**`/auto-apply` says the project MCP servers aren't enabled** — quit Claude and run `claude` again from inside this folder, approving the two servers when prompted.
+**`/grepjob-bot` says the project MCP servers aren't enabled** — quit Claude and run `claude` again from inside this folder, approving the two servers when prompted.
 
 **"Chrome extension not connected" when filling** — confirm "GrepJob Autofill Bridge" is present and enabled at `chrome://extensions`, loaded from this repo's `chrome-extension/` folder, and that a job application page is open.
 
-**"Profile not found …"** — onboarding hasn't run yet. Type `/auto-apply`; it builds your profile from your resume.
+**"Profile not found …"** — onboarding hasn't run yet. Type `/grepjob-bot`; it builds your profile from your resume.
 
-**Autofill succeeds but the application doesn't submit** — the skill detects this and retries, but some pages are non-standard. Look for validation errors (missing "I agree" checkbox, GDPR consent). `.claude/skills/auto-apply/references/ats-quirks.md` covers the common ones.
+**Autofill succeeds but the application doesn't submit** — the skill detects this and retries, but some pages are non-standard. Look for validation errors (missing "I agree" checkbox, GDPR consent). `.claude/skills/grepjob-bot/references/ats-quirks.md` covers the common ones.
 
 **Port 9876 already in use** — an older copy of the MCP is still running. `pkill -f 'mcp.mjs'` and restart Claude.

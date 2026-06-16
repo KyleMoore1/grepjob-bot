@@ -1,5 +1,5 @@
 ---
-name: auto-apply
+name: grepjob-bot
 description: Use whenever the user wants to find, apply to, or track software engineering job applications on Greenhouse, Lever, or Ashby ATS platforms. Triggers on any mention of "apply to jobs", "job search", "find me jobs", "submit application", "auto-fill application", "apply to this listing", "what have I applied to", references to a job URL on jobs.ashbyhq.com / boards.greenhouse.io / jobs.lever.co, or requests to kick off an application pipeline. Handles the full pipeline: first-run onboarding, searching jobs via the grepjob MCP, filling and submitting forms via the autofill Chrome extension MCP, verifying each submission, and logging every application.
 ---
 
@@ -28,7 +28,7 @@ Parse the JSON: `{ ok, onboardingNeeded, checks[] }`. Each check has `status` (`
 - `mcp__grepjob-autofill__*` — the local form-fill bridge + config store
 
 If `mcp__grepjob-autofill__*` is missing, the project MCP servers haven't been approved. Tell the user exactly this:
-> "The project MCP servers aren't enabled yet. Quit Claude, run `claude` again from inside this folder, and approve the two servers when prompted. Then run `/auto-apply` again."
+> "The project MCP servers aren't enabled yet. Quit Claude, run `claude` again from inside this folder, and approve the two servers when prompted. Then run `/grepjob-bot` again."
 Stop there — nothing else works without it.
 
 `mcp__claude-in-chrome__*` is **optional** (used to open job pages for you). If it's absent, you'll ask the user to open each page manually — note that but don't block.
@@ -38,7 +38,7 @@ Stop there — nothing else works without it.
 **0d. Render a compact status board** and act on it:
 
 ```
-auto-apply — ready check
+grepjob-bot — ready check
   ✓ Node, profile, resume, search params
   ✓ grepjob + autofill MCP connected
   ✗ Chrome extension not connected
