@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "grepjob-autofill": {
+      "command": "node",
+      "args": ["mcp/mcp.mjs"]
+    },
+    "grepjob": {
+      "type": "http",
+      "url": "https://wzishhuxscpbsvxosipt.supabase.co/functions/v1/mcp"
+    }
+  }
+}

@@ -1,0 +1,82 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# search.yml — your persistent job-search parameters
+#
+# Onboarding copies this file to config/search.yml. Edit that copy by hand any
+# time to retune what gets found and how applications are filled; the auto-apply
+# skill reads it on every "find jobs" run. None of this is PII, but search.yml is
+# gitignored so your tuning stays on your machine.
+#
+# Leave a list empty ([]) or a value null to mean "don't filter on this".
+# The first seven keys map 1:1 to the GrepJob search, so they use GrepJob's exact
+# value vocabularies (listed in each comment).
+# ─────────────────────────────────────────────────────────────────────────────
+
+# ── Discovery: what jobs to surface ──────────────────────────────────────────
+
+# Locations to include — use GrepJob's exact labels. A sampling:
+#   "Remote (US)", "New York, NY", "San Francisco, CA", "Seattle, WA",
+#   "Boston, MA", "Austin, TX", "Los Angeles, CA", "Chicago, IL", "Denver, CO",
+#   "Washington, DC", "Atlanta, GA", "Remote (Canada)", "Toronto, Canada",
+#   "London, UK", "Remote (UK)", "Bengaluru, India", "Remote (India)"  (70+ total)
+location:
+  - "Remote (US)"
+  - "New York, NY"
+
+# Seniority. Valid values: intern, entry level, mid level, senior, staff+
+seniority:
+  - "mid level"
+  - "senior"
+
+# Role sub-categories. Valid values: Backend, Full Stack, Frontend, AI & ML,
+# DevOps, Data Engineering, Data Science, Security, Testing, Embedded, Mobile, Gaming
+sub_category:
+  - "Backend"
+  - "Full Stack"
+
+# Tech stack to match. Valid values include: Python, TypeScript, JavaScript,
+# React, Node.js, Go, Java, Rust, C++, C#, Ruby, Kotlin, Scala, AWS, GCP, Azure,
+# Kubernetes, Docker, Terraform, PostgreSQL, MySQL, MongoDB, Redis, GraphQL,
+# Kafka, Spark, PyTorch, TensorFlow … (50+ total)
+tech_stack_filters:
+  - "TypeScript"
+  - "React"
+  - "Python"
+  - "Go"
+
+# Minimum annual salary in USD. Use null for no salary floor.
+min_salary: 150000
+
+# When true, postings that don't publish a salary still pass the min_salary
+# filter. Most postings omit salary, so true keeps the funnel wide.
+include_jobs_without_salary: true
+
+# H-1B sponsorship filter:
+#   true  → only jobs that sponsor H-1B
+#   false → only jobs that do NOT require sponsorship
+#   null  → don't filter on sponsorship
+sponsors_h1b_filter: null
+
+# ── Filtering: applied after discovery, on your machine ──────────────────────
+
+# Never apply to these companies (case-insensitive substring match on the name).
+avoid_companies: []
+
+# Companies to surface first when they appear. Cosmetic ranking only.
+preferred_companies: []
+
+# ── Apply defaults: reusable answers for common application questions ────────
+
+default_application_answers:
+  hybrid_willing: true
+  remote_only: false
+  relocate_willing: false
+  open_to_travel: false
+  # Some ATS forms ask for an experience band as free text:
+  years_of_experience_bucket: "4 - 6 Years"
+
+# Free-form notes the autofill agent may draw on for open-ended questions such as
+# "why do you want to work here" or "describe your most impactful project".
+# Keep it short and reusable.
+notes_for_autofill: >
+  I'm a software engineer with 5 years of experience building cloud products,
+  and I'm looking for a role where I can ship features that reach real users.

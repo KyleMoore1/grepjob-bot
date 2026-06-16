@@ -1,30 +1,33 @@
-# Build artifacts
+# ── Personal data — NEVER commit ────────────────────────────────────────────
+# This repo is public. Your profile, search prefs, resume, and application log
+# live in the clone on your machine only. The committed *.example.* files are
+# the placeholders; your real files below stay out of git.
+config/profile.json
+config/search.yml
+config/resume.*
+data/applications.csv
+data/*.csv
+
+# Per-machine Claude Code settings (not shipped)
+.claude/settings.local.json
+
+# ── Build artifacts / deps ──────────────────────────────────────────────────
+node_modules/
+/dist/
 mcp/src/node_modules/
 mcp/src/package-lock.json
 
-# OS
+# Chrome Web Store publishing credentials — never commit
+.env
+
+# ── OS / editors / logs / temp ──────────────────────────────────────────────
 .DS_Store
 Thumbs.db
-
-# Editors
 .vscode/
 .idea/
 *.swp
 *~
-
-# Logs
 *.log
 npm-debug.log*
-
-# Test / temp
 /tmp/
 /.cache/
-
-# Personal data — should never be in the repo
-profile.json
-applications.csv
-
-# Exceptions: the template files in skill/templates/ are safe to commit
-# (they contain placeholder values, not real PII).
-!skill/templates/profile.json
-!skill/templates/applications.csv

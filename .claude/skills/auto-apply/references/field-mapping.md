@@ -2,7 +2,7 @@
 
 `read_form` returns a field's `label`. This reference maps common labels to the profile field you should use. Match on lowercase substring, not exact string — `"First Name"`, `"Legal First Name"`, and `"first_name"` all map to `profile.first_name`.
 
-When a label doesn't match anything here, use judgment: a text field asking about your company → `current_company`; a question about AI use or recent projects → pull from `preferences.notes_for_autofill` and/or `profile.current_title` + project name.
+When a label doesn't match anything here, use judgment: a text field asking about your company → `current_company`; a question about AI use or recent projects → pull from `search.notes_for_autofill` and/or `profile.current_title` + project name.
 
 ## Identity
 
@@ -65,7 +65,7 @@ Most users: authorized yes, sponsorship no.
 |---|---|
 | current company, current employer, where do you work | `current_company` |
 | current title, current role, job title | `current_title` |
-| years of experience, how many years | `years_of_experience` (or the matching bucket like `"4 - 6 Years"` from `preferences.default_application_answers.years_of_experience_bucket`) |
+| years of experience, how many years | `years_of_experience` (or the matching bucket like `"4 - 6 Years"` from `search.default_application_answers.years_of_experience_bucket`) |
 | salary expectations, compensation expectations, desired salary | `salary_expectations` |
 
 ## Referral
@@ -126,7 +126,7 @@ Some Airtable, Patreon, and startup forms ask questions like:
 - "Why do you want to work here?"
 
 Generate a response using:
-- `preferences.notes_for_autofill` (user's base elevator pitch)
+- `search.notes_for_autofill` (user's base elevator pitch)
 - Tailor it slightly to the job description if available
 - Keep it to 3-5 sentences
 

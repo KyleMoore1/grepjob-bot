@@ -28,7 +28,7 @@
   "requires_sponsorship": false,
   "referral_source": "LinkedIn",
   "salary_expectations": "Open to discuss",
-  "resume_path": "/Users/yourname/Documents/Resume.pdf",
+  "resume_path": "config/resume.pdf",
   "cover_letter_path": null,
   "eeo_gender": "Decline to self-identify",
   "eeo_race": "Decline to self-identify",

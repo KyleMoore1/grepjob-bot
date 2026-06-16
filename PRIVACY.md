@@ -6,12 +6,12 @@ This document describes exactly what data the grepjob-autofill system reads, whe
 
 All of your personal data lives in files on your own computer:
 
-- `~/.auto-apply/profile.json` — your name, email, phone, LinkedIn, GitHub, location, current employer, education, work authorization, and EEO preferences.
-- `~/.auto-apply/preferences.json` — your job search criteria (locations, seniority, tech stack, minimum salary, companies to avoid).
-- `~/.auto-apply/applications.csv` — one row per application you've submitted: date, company, role, URL, status.
-- Your resume PDF, at whatever path you pointed `profile.resume_path` to.
+- `config/profile.json` — your name, email, phone, LinkedIn, GitHub, location, current employer, education, work authorization, and EEO preferences.
+- `config/search.yml` — your job search parameters (locations, seniority, tech stack, minimum salary, companies to avoid).
+- `data/applications.csv` — one row per application you've submitted: date, company, role, URL, status.
+- `config/resume.pdf` — your resume.
 
-These files are read and written only by the Claude skill and the local MCP server running on your machine. They are never uploaded anywhere by this software.
+All of these live inside the cloned `grepjob-autofill` folder on your computer, and every one is gitignored — they are never committed, pushed, or uploaded anywhere by this software. They are read and written only by the Claude skill and the local MCP server running on your machine.
 
 ## What leaves your machine
 
@@ -19,7 +19,7 @@ Three outbound data flows exist. Each has a narrow, stated purpose:
 
 1. **To the job application's ATS server (Greenhouse / Lever / Ashby).** When you apply to a job, the Chrome extension fills the form on the application page and submits it. Form content — name, email, phone, resume file, answers you provide — goes to the ATS, exactly as if you'd filled the form manually. This is the intended behavior.
 
-2. **To `grepjob.com`.** The remote `grepjob` MCP receives job search queries (your preference filters: location, seniority, tech stack, salary floor). Responses are lists of public job listings. This is the only data that goes to a server operated by the maintainers of this project. Your profile, resume, application history, and anything from `~/.auto-apply/` are **never** sent to grepjob.com.
+2. **To `grepjob.com`.** The remote `grepjob` MCP receives job search queries (your preference filters: location, seniority, tech stack, salary floor). Responses are lists of public job listings. This is the only data that goes to a server operated by the maintainers of this project. Your profile, resume, application history, and anything in your `config/` or `data/` folders are **never** sent to grepjob.com.
 
 3. **From the Chrome extension to the local MCP server via `ws://localhost:9876`.** This connection never leaves your computer. It carries messages between the extension and the MCP server (form field metadata, fill commands, submit confirmations). Localhost traffic is not visible to your ISP, your network, or any third party.
 
@@ -36,7 +36,7 @@ Three outbound data flows exist. Each has a narrow, stated purpose:
 When you use this skill inside Claude Code, Claude itself (running on Anthropic's servers) sees whatever you send it in the conversation, which includes:
 
 - The resume content, when Claude reads it during first-run setup
-- Your profile fields, when Claude loads `profile.json` to fill a form
+- Your profile fields, when Claude loads `config/profile.json` to fill a form
 - Job listings returned by the `grepjob` MCP
 - Form fields read from application pages
 
@@ -46,7 +46,7 @@ This is the same data exposure as any other task you give Claude. Anthropic's da
 
 The extension requests:
 
-- **`activeTab`, `tabs`, `scripting`** — to read and fill forms on the job application tab you're viewing.
+- **`activeTab`, `tabs`** — to locate the job application tab you're viewing (matched by its Greenhouse/Lever/Ashby URL) and route fill/submit commands to it.
 - **`alarms`** — to keep the service worker alive so the WebSocket to the MCP server stays connected.
 - **`debugger`** — to dispatch trusted Escape keystrokes via Chrome DevTools Protocol. This is required for reliably closing React Select dropdown menus on Greenhouse forms, because synthetic keyboard events don't work when the Chrome window doesn't have focus. **While the extension is active, Chrome shows a yellow banner that says "GrepJob Autofill Bridge started debugging this browser." This is a Chrome warning about the debugger API — it's normal, not a sign of compromise.** The debugger API is only used to send keyboard and mouse input events; it is not used to read browser state, intercept network requests, or modify any tab other than the application page.
 - **`host_permissions`** restricted to these domains: `jobs.ashbyhq.com`, `boards.greenhouse.io`, `job-boards.greenhouse.io`, `boards.eu.greenhouse.io`, `job-boards.eu.greenhouse.io`, `jobs.lever.co`, `jobs.eu.lever.co`. The extension cannot read or modify any other website.
