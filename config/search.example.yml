@@ -7,11 +7,37 @@
 # gitignored so your tuning stays on your machine.
 #
 # Leave a list empty ([]) or a value null to mean "don't filter on this".
-# The first seven keys map 1:1 to the GrepJob search, so they use GrepJob's exact
-# value vocabularies (listed in each comment).
+# The seven keys under "Discovery" map 1:1 to the GrepJob search, so they use
+# GrepJob's exact value vocabularies (listed in each comment). `intent` and
+# `dealbreakers` are never sent to the search — the agent applies them when
+# selecting results (intent ranks, dealbreakers veto).
 # ─────────────────────────────────────────────────────────────────────────────
 
+# ── Intent: what you're actually looking for ─────────────────────────────────
+
+# A short paragraph, in your own words, describing your ideal next role — the
+# things checkbox filters can't express: company size/stage, product domain,
+# what you want to own, culture, growth. The agent reads this on every
+# "find jobs" run to rank and select results; the structured filters below
+# only narrow the pool. The better this paragraph, the better the finds.
+intent: >
+  I'm a mid-level engineer at a large cloud provider looking for a role at a
+  smaller company where I can own user-facing features end to end. I care more
+  about shipping product than about which stack it's in.
+
+# Hard exclusions, in your own words — anything that makes a job an automatic
+# no: industries, company types or cultures, role shapes, tech you refuse to
+# work with (or can't work without). The agent treats these as VETOES when
+# selecting jobs, not preferences to trade off. "None really" is fine.
+dealbreakers: >
+  No pure platform/infra roles, nothing adtech, and no companies with a
+  reputation for grinding people down.
+
 # ── Discovery: what jobs to surface ──────────────────────────────────────────
+#
+# Everything in this section is a HARD filter — a job that doesn't match is
+# never seen, and the agent can't rank what it never sees. Reserve these for
+# true dealbreakers; express preferences in `intent` above instead.
 
 # Locations to include — use GrepJob's exact labels. A sampling:
 #   "Remote (US)", "New York, NY", "San Francisco, CA", "Seattle, WA",
@@ -29,19 +55,23 @@ seniority:
 
 # Role sub-categories. Valid values: Backend, Full Stack, Frontend, AI & ML,
 # DevOps, Data Engineering, Data Science, Security, Testing, Embedded, Mobile, Gaming
+# Pick generously — categories are auto-tagged and a job carrying only a
+# neighboring tag (e.g. "Frontend" on a product-eng role) is otherwise invisible.
 sub_category:
   - "Backend"
   - "Full Stack"
+  - "Frontend"
 
-# Tech stack to match. Valid values include: Python, TypeScript, JavaScript,
-# React, Node.js, Go, Java, Rust, C++, C#, Ruby, Kotlin, Scala, AWS, GCP, Azure,
-# Kubernetes, Docker, Terraform, PostgreSQL, MySQL, MongoDB, Redis, GraphQL,
-# Kafka, Spark, PyTorch, TensorFlow … (50+ total)
-tech_stack_filters:
-  - "TypeScript"
-  - "React"
-  - "Python"
-  - "Go"
+# Tech stack — leave [] unless a stack is a genuine dealbreaker. A job must
+# explicitly list one of these tags to appear at all, and roughly 1 in 10
+# listings has no tech-stack tags extracted, so every entry here silently
+# shrinks the pool (in practice ~30% of an otherwise-matching slice). Stack
+# *preferences* belong in `intent`, where they rank jobs instead of deleting
+# them. Valid values include: Python, TypeScript, JavaScript, React, Node.js,
+# Go, Java, Rust, C++, C#, Ruby, Kotlin, Scala, AWS, GCP, Azure, Kubernetes,
+# Docker, Terraform, PostgreSQL, MySQL, MongoDB, Redis, GraphQL, Kafka, Spark,
+# PyTorch, TensorFlow … (50+ total)
+tech_stack_filters: []
 
 # Minimum annual salary in USD. Use null for no salary floor.
 min_salary: 150000
@@ -50,10 +80,14 @@ min_salary: 150000
 # filter. Most postings omit salary, so true keeps the funnel wide.
 include_jobs_without_salary: true
 
-# H-1B sponsorship filter:
-#   true  → only jobs that sponsor H-1B
-#   false → only jobs that do NOT require sponsorship
-#   null  → don't filter on sponsorship
+# H-1B sponsorship filter (company-level, matched against real H-1B filing
+# records; a company with no filing match is recorded as a non-sponsor):
+#   true → only companies verified to sponsor H-1B — set this if you NEED
+#          sponsorship
+#   null → don't filter on sponsorship (right for everyone else)
+# Never set false. "No sponsorship record" mixes true non-sponsors with
+# unknowns, and it would hide ~3 in 4 jobs — if you don't need sponsorship,
+# the correct value is null.
 sponsors_h1b_filter: null
 
 # ── Filtering: applied after discovery, on your machine ──────────────────────

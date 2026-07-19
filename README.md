@@ -39,7 +39,7 @@ Finally, in Claude:
 /grepjob-bot
 ```
 
-On first run it checks your setup and walks you through onboarding: point it at your resume PDF and it pre-fills most of your profile from it, then asks the handful of things resumes never contain (pronouns, work authorization, EEO preferences, optional address, referral source). It saves everything into the repo and verifies the setup before you apply.
+On first run it checks your setup and walks you through onboarding: point it at your resume PDF and it pre-fills most of your profile from it, then asks the handful of things resumes never contain (pronouns, work authorization, EEO preferences, optional address, referral source). It also asks what you're actually looking for — a couple of sentences in your own words — which it uses to rank every future search, keeping the hard filters deliberately wide. It saves everything into the repo and verifies the setup before you apply.
 
 Want to confirm your install at any time? Run `node doctor.mjs`.
 

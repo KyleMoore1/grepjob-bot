@@ -86,19 +86,61 @@ Then ask for: name, email, phone, LinkedIn, GitHub (optional), location, current
 
 ## Search parameters
 
-The MCP doesn't manage `search.yml` (only the skill reads it), so write it yourself to the `searchPath` from `get_config_paths`. Start from `config/search.example.yml` (fully documented), seed guesses from the resume, and surface them as suggestions:
+The MCP doesn't manage `search.yml` (only the skill reads it), so write it yourself to the `searchPath` from `get_config_paths`. Start from `config/search.example.yml` (fully documented).
 
-> Based on your resume I'd guess:
-> - **Tech stack:** TypeScript, React, Python, Go (from your skills section)
-> - **Sub-categories:** Backend, Full Stack
-> - **Seniority:** mid level → senior (5 years as a SWE II)
->
-> Sound right? And:
-> - **Where do you want to work?** (pick multiple)
-> - **Minimum salary?**
-> - **Any companies to avoid?** (current employer, places that rejected you)
+**The dealbreaker principle governs this whole section.** Every key under "Discovery" is a HARD filter — a job that doesn't match is never returned, and you can't rank what you never see. So structured filters are only for things the user would *never* accept otherwise (location, salary floor, sponsorship). Everything that is a *preference* — stack, domain, company size, role flavor — goes in `intent`; anything that's an automatic no in the user's own words goes in `dealbreakers`, which find-jobs treats as vetoes.
 
-Keep the YAML keys exactly as in the example (`location`, `seniority`, `sub_category`, `tech_stack_filters`, `min_salary`, `include_jobs_without_salary`, `sponsors_h1b_filter`, plus `avoid_companies`, `preferred_companies`, `default_application_answers`, `notes_for_autofill`) — the first seven pass straight through to `mcp__grepjob__search_jobs`. The valid value vocabularies are listed in the example file's comments. Write the populated YAML to `searchPath`.
+**Pace: ONE question per turn.** Never bundle these questions into a single message — a wall of questions feels like a form and produces rushed answers. Ask, wait, store, move on. Wherever a question has guessable answers, present a short numbered multiple-choice list seeded from the resume so the user can answer with a number instead of composing text.
+
+### Turn 1 — intent
+
+> "First, the one that matters most: in a couple of sentences, what does your ideal next role look like? Company size or stage, domain, what you'd want to own — whatever actually matters to you. Your words here drive which jobs I pick."
+
+Store their answer (lightly cleaned up, in their voice) as `intent`. If they give a one-word answer, probe once ("anything about company size, domain, or what you'd be building?") but don't interrogate — `intent` can be edited by hand any time.
+
+### Turn 2 — dealbreakers
+
+> "And the flip side — what's completely out? Industries you won't touch, company cultures you're done with, tech you refuse to work with (or can't live without), role shapes that are an automatic no."
+
+Store as `dealbreakers`, their words. "None really" is a fine answer — write a short honest line, don't invent exclusions. Two mappings to structured filters happen here:
+
+- A stack requirement stated in hard terms ("I only want Rust jobs") → ALSO write `tech_stack_filters`. The filter enforces it on tagged jobs; the dealbreaker text lets ranking catch matching jobs whose tags were missed. Warn them about the cost: a stack filter drops every job that doesn't explicitly tag it, including the ~10% of listings with no stack tags at all. If they merely *mention* liked technologies in intent, `tech_stack_filters` stays `[]`.
+- A visa need ("I need sponsorship") → `sponsors_h1b_filter: true`. **Never write `false`** — sponsorship data is company-level filing-record matching where "no record" means unknown, so `false` doesn't mean "no sponsorship hassle", it means an arbitrary ~26% slice of jobs. Users who don't need sponsorship get `null`.
+
+### Turn 3 — location (multiple choice, seeded from the resume)
+
+Build the list from the profile: their city's GrepJob label (if it's in the vocabulary), the Remote option for their country, then one or two plausible nearby metros. For a New York resume:
+
+> "Where do you want to work? Pick any that apply:
+> 1. New York, NY
+> 2. Remote (US)
+> 3. Somewhere else — name it and I'll match it to GrepJob's list"
+
+Use GrepJob's exact labels (vocabulary in the example file's comments). If their city isn't in the vocabulary, offer the nearest listed metro and Remote.
+
+### Turn 4 — salary floor
+
+> "Minimum salary — a hard floor in USD, or none? (Jobs that don't post a salary still pass either way.)"
+
+### Turn 5 — companies to avoid (seeded)
+
+> "Companies I should never apply to? I'd start with <current employer> — anyone else, like places that recently rejected you?"
+
+On a reconfigure run, show the previous `avoid_companies` list and ask what to keep/add — don't make them re-remember it, and don't silently drop prior entries.
+
+### Then confirm the seeds — statements, not questions
+
+Seniority and sub-category need no user input; present them as a one-line confirmation the user can veto:
+
+> "Last bit, no questions: I'm setting seniority to mid level + senior (5 years as a SWE II) and keeping categories broad — Backend, Full Stack, Frontend — since they're auto-tagged and a narrow pick hides jobs. Say the word if either looks wrong."
+
+Rules for the seeds:
+
+- `seniority`: infer from years of experience (0–2 entry, 3–5 mid, 5–8 senior, 8+ staff+) but **always include both adjacent bands at a boundary** (5 yrs → mid level + senior).
+- `sub_category`: seed from recent titles, then widen by one neighbor (backend title → Backend + Full Stack + Frontend). Never write a single-category list without the user insisting.
+- `intent`/`dealbreakers` stay in the user's words — don't pad them with resume-derived stack they never mentioned; the find-jobs flow already has their profile for that context.
+
+Keep the YAML keys exactly as in the example (`intent`, `dealbreakers`, `location`, `seniority`, `sub_category`, `tech_stack_filters`, `min_salary`, `include_jobs_without_salary`, `sponsors_h1b_filter`, plus `avoid_companies`, `preferred_companies`, `default_application_answers`, `notes_for_autofill`) — the seven Discovery keys pass straight through to `mcp__grepjob__search_jobs`; `intent` and `dealbreakers` never do (the agent applies them when selecting results: intent ranks, dealbreakers veto). The valid value vocabularies are listed in the example file's comments. Write the populated YAML to `searchPath`.
 
 ## Applications log
 

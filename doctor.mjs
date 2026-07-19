@@ -90,14 +90,27 @@ if (!existsSync(searchPath)) {
     "Onboarding creates it from config/search.example.yml"
   );
 } else {
-  const size = readFileSync(searchPath, "utf-8").trim().length;
-  add(
-    "search",
-    "Search params",
-    size > 0 ? "ok" : "warn",
-    rel(searchPath),
-    size > 0 ? "" : "search.yml is empty — copy it from config/search.example.yml"
-  );
+  const body = readFileSync(searchPath, "utf-8");
+  const size = body.trim().length;
+  if (size === 0) {
+    add(
+      "search",
+      "Search params",
+      "warn",
+      rel(searchPath),
+      "search.yml is empty — copy it from config/search.example.yml"
+    );
+  } else if (!/^intent\s*:/m.test(body)) {
+    add(
+      "search",
+      "Search params",
+      "warn",
+      "no `intent:` key — searches will rely on hard filters alone",
+      "Run /grepjob-bot and say \"redo my search\" to add an intent paragraph (see config/search.example.yml)"
+    );
+  } else {
+    add("search", "Search params", "ok", rel(searchPath));
+  }
 }
 
 // 4. Resume (only checkable once we have a profile)

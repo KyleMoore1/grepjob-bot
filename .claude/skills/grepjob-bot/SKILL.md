@@ -86,12 +86,20 @@ If it returns a validation error, fix the named field and call again.
 
 ### 1e. Search parameters → `config/search.yml`
 
-The MCP doesn't manage this file (it's only read by you), so write it directly to the `searchPath` from `get_config_paths`:
+The MCP doesn't manage this file (it's only read by you), so write it directly to the `searchPath` from `get_config_paths`.
+
+**One question per turn — never bundle these into a single message.** Use numbered multiple-choice seeded from the resume wherever answers are guessable. The sequence:
 
 1. Read `config/search.example.yml` (the documented template).
-2. Pre-fill smart guesses from the resume: `tech_stack_filters` from their skills section; `sub_category` from recent titles (React/TS → Frontend/Full Stack; backend/infra → Backend); `seniority` from years of experience (0–2 entry, 3–5 mid, 5–8 senior, 8+ staff+).
-3. Ask explicitly for: `location` (GrepJob's labels — see the example file's comments), `min_salary`, and `avoid_companies` (current employer, places they've been rejected).
-4. Write the populated YAML to `searchPath`.
+2. **Turn 1 — `intent`:** "in a couple of sentences, what does your ideal next role look like?" (company size/stage, domain, what they'd own). Their words, lightly cleaned. Highest-leverage field in the file.
+3. **Turn 2 — `dealbreakers`:** "and what's completely out?" (industries, cultures, role shapes, must-have/must-not tech). Their words; find-jobs treats these as vetoes. Stack stated as a hard requirement here → also write `tech_stack_filters`; a visa need → `sponsors_h1b_filter: true` (never `false`).
+4. **Turn 3 — `location`:** numbered multiple choice seeded from the profile (their city's GrepJob label, their country's Remote option, "somewhere else").
+5. **Turn 4 — `min_salary`:** hard floor or none; jobs without posted salary pass either way.
+6. **Turn 5 — `avoid_companies`:** seeded with the current employer; on reconfigure, offer the previous list rather than silently dropping it.
+7. **Confirm the seeds as statements, not questions:** `seniority` from years of experience (0–2 entry, 3–5 mid, 5–8 senior, 8+ staff+; include both adjacent bands at a boundary), `sub_category` from recent titles widened by one neighbor, `tech_stack_filters` `[]` unless a stack dealbreaker was stated (a stack filter hides ~30% of otherwise-matching jobs, incl. ~10% with no stack tags extracted).
+8. Write the populated YAML to `searchPath`.
+
+`references/initialization.md` has the full conversational pattern and seeding rules.
 
 ### 1f. Verify the round-trip BEFORE finishing
 
@@ -119,9 +127,10 @@ Then re-check `extension_status` until it's `connected:true`. (Reconfiguring lat
 ### 2.1 Find jobs
 
 1. Read `searchPath` (the `config/search.yml` YAML) and `applicationsPath` (the CSV).
-2. Call `mcp__grepjob__search_jobs`, passing the search keys straight through — they're named to match the tool: `location`, `seniority`, `sub_category`, `tech_stack_filters`, `min_salary`, `include_jobs_without_salary`, `sponsors_h1b_filter`.
+2. Call `mcp__grepjob__search_jobs`, passing the Discovery keys straight through — they're named to match the tool: `location`, `seniority`, `sub_category`, `tech_stack_filters`, `min_salary`, `include_jobs_without_salary`, `sponsors_h1b_filter`. **`intent` and `dealbreakers` are never passed to the tool** — they're yours to apply in step 4.
 3. Filter out jobs where: the `url` is already in the applications CSV; the `company` matches `avoid_companies` (case-insensitive substring); or the URL isn't on a supported ATS domain (see **Supported ATS**).
-4. Present the rest as a compact table — company, role, location, comp, one-line why-it-matches — and let the user veto. Use `page` for more.
+4. **Veto against `dealbreakers`, then select against `intent`.** Dealbreakers are absolute — a job matching one ("defense", "996 culture") is out, not merely ranked lower. Then read each survivor's title, summary, and requirements and judge it against the `intent` paragraph — that's where the user's real preferences (company size, domain, role flavor, stack) live, since the hard filters are deliberately wide. Walk additional `page`s until you have a solid set of matches, not just whatever page 0 held.
+5. Present the matches as a compact table — company, role, location, comp, and a one-line why-it-matches that references the user's `intent` (not just the filters). Let the user veto. Offer the near-misses in a short "also surfaced" line so wide filtering stays transparent.
 
 ### 2.2 Apply to jobs
 
