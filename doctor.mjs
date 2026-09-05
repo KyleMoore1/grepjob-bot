@@ -100,6 +100,14 @@ if (!existsSync(searchPath)) {
       rel(searchPath),
       "search.yml is empty — copy it from config/search.example.yml"
     );
+  } else if (/["']AI & ML["']/.test(body)) {
+    add(
+      "search",
+      "Search params",
+      "warn",
+      'sub_category uses "AI & ML", which GrepJob retired — searches will be rejected',
+      'Replace it in config/search.yml with "AI Applications", "ML Engineering", and/or "AI Research"'
+    );
   } else if (!/^intent\s*:/m.test(body)) {
     add(
       "search",

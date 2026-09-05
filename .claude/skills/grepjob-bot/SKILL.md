@@ -3,7 +3,7 @@ name: grepjob-bot
 description: Use whenever the user wants to find, apply to, or track software engineering job applications on Greenhouse, Lever, or Ashby ATS platforms. Triggers on any mention of "apply to jobs", "job search", "find me jobs", "submit application", "auto-fill application", "apply to this listing", "what have I applied to", references to a job URL on jobs.ashbyhq.com / boards.greenhouse.io / jobs.lever.co, or requests to kick off an application pipeline. Handles the full pipeline: first-run onboarding, searching jobs via the grepjob MCP, filling and submitting forms via the autofill Chrome extension MCP, verifying each submission, and logging every application.
 ---
 
-# Auto-Apply
+# grepjob-bot
 
 You operate the user's job-application pipeline. Everything lives **inside this cloned repo** — their profile, search parameters, resume, and application log are all in `config/` and `data/`, never in the home directory. The local `grepjob-autofill` MCP owns reading/writing that data; you drive discovery and the browser.
 
@@ -31,6 +31,14 @@ If `mcp__grepjob-autofill__*` is missing, the project MCP servers haven't been a
 > "The project MCP servers aren't enabled yet. Quit Claude, run `claude` again from inside this folder, and approve the two servers when prompted. Then run `/grepjob-bot` again."
 Stop there — nothing else works without it.
 
+**The `grepjob` server also needs a sign-in.** It's a hosted MCP behind OAuth: until the user has signed in, the only tool it exposes is `mcp__grepjob__authenticate`, and `mcp__grepjob__search_jobs` appears only after the flow completes. So the prefix existing is not enough — check for `search_jobs` specifically. If it's missing:
+1. Call `mcp__grepjob__authenticate` and hand the user the authorization URL it returns: *"Sign in to GrepJob at this link, then tell me when you're done."*
+2. When they confirm, check that `mcp__grepjob__search_jobs` now exists. If it still doesn't, ask them to run `/mcp` in Claude Code, pick `grepjob`, and authenticate from there.
+
+Only **finding jobs** needs this. Onboarding and applying to a URL the user pastes don't, so don't block profile setup on it — just get it done before the first search.
+
+**Use the remote `grepjob` server and nothing else for discovery.** Some machines also have a `mcp__grepjob-local__*` server (or other similarly named job-search tools) configured at the user level. Never substitute one of those when `mcp__grepjob__search_jobs` is missing or the sign-in is pending — they run a different, possibly stale index and taxonomy. If the remote isn't available, do the auth flow above or stop; don't search elsewhere.
+
 `mcp__claude-in-chrome__*` is **optional** (used to open job pages for you). If it's absent, you'll ask the user to open each page manually — note that but don't block.
 
 **0c. Get the canonical paths.** Once the MCP is up, call `mcp__grepjob-autofill__get_config_paths`. This is the **single source of truth** for where every file lives (`profilePath`, `searchPath`, `applicationsPath`, `configDir`, `dataDir`, `repoRoot`, plus `*Exists`/`profileValid` flags). Use these absolute paths for all reads/writes — never hand-build paths or assume the cwd.
@@ -41,6 +49,7 @@ Stop there — nothing else works without it.
 grepjob-bot — ready check
   ✓ Node, profile, resume, search params
   ✓ grepjob + autofill MCP connected
+  ✓ grepjob signed in
   ✗ Chrome extension not connected
 ```
 
@@ -92,11 +101,11 @@ The MCP doesn't manage this file (it's only read by you), so write it directly t
 
 1. Read `config/search.example.yml` (the documented template).
 2. **Turn 1 — `intent`:** "in a couple of sentences, what does your ideal next role look like?" (company size/stage, domain, what they'd own). Their words, lightly cleaned. Highest-leverage field in the file.
-3. **Turn 2 — `dealbreakers`:** "and what's completely out?" (industries, cultures, role shapes, must-have/must-not tech). Their words; find-jobs treats these as vetoes. Stack stated as a hard requirement here → also write `tech_stack_filters`; a visa need → `sponsors_h1b_filter: true` (never `false`).
+3. **Turn 2 — `dealbreakers`:** "and what's completely out?" (industries, cultures, role shapes, must-have/must-not tech). Their words; find-jobs treats these as vetoes. Stack stated as a hard requirement here → also write `tech_stack_filters`; a visa need → `sponsors_h1b_filter: true` (never `false`); an absolute company size/stage exclusion ("never a big company again") → `company_size` / `funding_stage`.
 4. **Turn 3 — `location`:** numbered multiple choice seeded from the profile (their city's GrepJob label, their country's Remote option, "somewhere else").
 5. **Turn 4 — `min_salary`:** hard floor or none; jobs without posted salary pass either way.
 6. **Turn 5 — `avoid_companies`:** seeded with the current employer; on reconfigure, offer the previous list rather than silently dropping it.
-7. **Confirm the seeds as statements, not questions:** `seniority` from years of experience (0–2 entry, 3–5 mid, 5–8 senior, 8+ staff+; include both adjacent bands at a boundary), `sub_category` from recent titles widened by one neighbor, `tech_stack_filters` `[]` unless a stack dealbreaker was stated (a stack filter hides ~30% of otherwise-matching jobs, incl. ~10% with no stack tags extracted).
+7. **Confirm the seeds as statements, not questions:** `seniority` from years of experience (0–2 entry, 3–5 mid, 5–8 senior, 8+ staff+; include both adjacent bands at a boundary), `sub_category` from recent titles widened by one neighbor (e.g. Backend → Backend + Full Stack + Product Engineering; the vocabulary is the 20 values in the example file — `AI & ML` no longer exists), `company_size`/`funding_stage` `[]` unless a size/stage dealbreaker was stated, `tech_stack_filters` `[]` unless a stack dealbreaker was stated (a stack filter hides ~30% of otherwise-matching jobs, incl. ~10% with no stack tags extracted).
 8. Write the populated YAML to `searchPath`.
 
 `references/initialization.md` has the full conversational pattern and seeding rules.
@@ -127,9 +136,9 @@ Then re-check `extension_status` until it's `connected:true`. (Reconfiguring lat
 ### 2.1 Find jobs
 
 1. Read `searchPath` (the `config/search.yml` YAML) and `applicationsPath` (the CSV).
-2. Call `mcp__grepjob__search_jobs`, passing the Discovery keys straight through — they're named to match the tool: `location`, `seniority`, `sub_category`, `tech_stack_filters`, `min_salary`, `include_jobs_without_salary`, `sponsors_h1b_filter`. **`intent` and `dealbreakers` are never passed to the tool** — they're yours to apply in step 4.
+2. Call `mcp__grepjob__search_jobs`, passing the Discovery keys straight through — they're named to match the tool: `location`, `seniority`, `sub_category`, `tech_stack_filters`, `min_salary`, `include_jobs_without_salary`, `sponsors_h1b_filter`, `company_size`, `funding_stage`. **`intent` and `dealbreakers` are never passed to the tool** — they're yours to apply in step 4. Every call returns 20 jobs and counts against the account's search quota (free accounts get 25 searches total, a subscription lifts the cap), so treat each page as spending something: widen filters before you page, and stop paging once you have enough survivors.
 3. Filter out jobs where: the `url` is already in the applications CSV; the `company` matches `avoid_companies` (case-insensitive substring); or the URL isn't on a supported ATS domain (see **Supported ATS**).
-4. **Veto against `dealbreakers`, then select against `intent`.** Dealbreakers are absolute — a job matching one ("defense", "996 culture") is out, not merely ranked lower. Then read each survivor's title, summary, and requirements and judge it against the `intent` paragraph — that's where the user's real preferences (company size, domain, role flavor, stack) live, since the hard filters are deliberately wide. Walk additional `page`s until you have a solid set of matches, not just whatever page 0 held.
+4. **Veto against `dealbreakers`, then select against `intent`.** Dealbreakers are absolute — a job matching one ("defense", "996 culture") is out, not merely ranked lower. Then read each survivor's title, summary, and requirements and judge it against the `intent` paragraph — that's where the user's real preferences (company size, domain, role flavor, stack) live, since the hard filters are deliberately wide. Walk additional `page`s when page 0 left you short — deliberately, not exhaustively, since each page is a quota'd search call.
 5. Present the matches as a compact table — company, role, location, comp, and a one-line why-it-matches that references the user's `intent` (not just the filters). Let the user veto. Offer the near-misses in a short "also surfaced" line so wide filtering stays transparent.
 
 ### 2.2 Apply to jobs

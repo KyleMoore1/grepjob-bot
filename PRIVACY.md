@@ -7,7 +7,7 @@ This document describes exactly what data the grepjob-bot system reads, where it
 All of your personal data lives in files on your own computer:
 
 - `config/profile.json` — your name, email, phone, LinkedIn, GitHub, location, current employer, education, work authorization, and EEO preferences.
-- `config/search.yml` — your job search parameters (locations, seniority, tech stack, minimum salary, companies to avoid).
+- `config/search.yml` — your job search parameters (your intent and dealbreakers written in your own words, locations, seniority, tech stack, minimum salary, company size/stage, companies to avoid).
 - `data/applications.csv` — one row per application you've submitted: date, company, role, URL, status.
 - `config/resume.pdf` — your resume.
 

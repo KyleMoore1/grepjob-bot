@@ -6,10 +6,10 @@ Auto-fill software engineering job applications across Greenhouse, Lever, and As
 
 ## What you get
 
-- An **grepjob-bot skill** (`/grepjob-bot`) — onboards you from your resume, finds jobs, fills + submits applications, verifies each one, and tracks them.
+- A **grepjob-bot skill** (`/grepjob-bot`) — onboards you from your resume, finds jobs, fills + submits applications, verifies each one, and tracks them.
 - A **local MCP server** (`mcp/mcp.mjs`) — bridges Claude to the Chrome extension over a localhost WebSocket and stores/validates your profile and application log.
 - A **Chrome extension** (`chrome-extension/`) — fills the form fields on the application page.
-- A **remote MCP** (`grepjob`) — searches jobs matching your saved parameters.
+- A **remote MCP** (`grepjob`) — searches jobs matching your saved parameters. It's hosted and needs a one-time sign-in; free accounts get 25 searches, a [GrepJob](https://grepjob.com) subscription lifts the cap.
 
 ## Requirements
 
@@ -26,6 +26,8 @@ claude
 ```
 
 When Claude starts inside the folder it detects the project's `.mcp.json` and asks you to approve two MCP servers — **`grepjob-autofill`** and **`grepjob`**. Approve both.
+
+The `grepjob` server is behind a sign-in. The skill hands you a login link the first time it needs to search (you can also do it up front with `/mcp` → `grepjob` → authenticate). Onboarding and applying to a pasted URL work without it.
 
 Then load the Chrome extension once:
 
@@ -75,7 +77,7 @@ Your personal files are all gitignored — they never get committed and never le
 
 ## Tuning your search
 
-Open `config/search.yml` any time and edit it by hand — locations, seniority, sub-categories, tech stack, salary floor, H-1B filter, companies to avoid, and reusable answers for common application questions. Every field is documented inline (start from `config/search.example.yml`). The skill reads it fresh on each "find jobs" run.
+Open `config/search.yml` any time and edit it by hand — your intent and dealbreakers paragraphs, locations, seniority, sub-categories, tech stack, salary floor, H-1B filter, company size and funding stage, companies to avoid, and reusable answers for common application questions. Every field is documented inline (start from `config/search.example.yml`). The skill reads it fresh on each "find jobs" run.
 
 ## Supported ATS platforms
 
@@ -105,6 +107,10 @@ Delete the clone and remove the extension from `chrome://extensions`. There's no
 Run **`node doctor.mjs`** first — it checks Node, your profile, resume, search params, and the MCP bridge, and prints the exact fix for anything wrong.
 
 **`/grepjob-bot` says the project MCP servers aren't enabled** — quit Claude and run `claude` again from inside this folder, approving the two servers when prompted.
+
+**Searching says it needs to authenticate / only `authenticate` shows under `grepjob`** — the hosted search API requires a sign-in. Run `/mcp`, pick `grepjob`, and complete the login in your browser; `search_jobs` appears once it finishes. "You've used all 25 free searches" means the free quota is spent — subscribe at grepjob.com or wait for the skill to search more narrowly.
+
+**Search fails with an enum/validation error on `sub_category` or `tech_stack_filters`** — a value in `config/search.yml` isn't in GrepJob's current vocabulary (e.g. `AI & ML` was retired; `Kafka` is `Apache Kafka`). `node doctor.mjs` flags the retired one; the full lists are in `config/search.example.yml`.
 
 **"Chrome extension not connected" when filling** — confirm "GrepJob Autofill Bridge" is present and enabled at `chrome://extensions`, loaded from this repo's `chrome-extension/` folder, and that a job application page is open.
 

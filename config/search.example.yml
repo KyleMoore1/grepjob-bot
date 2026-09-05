@@ -7,7 +7,7 @@
 # gitignored so your tuning stays on your machine.
 #
 # Leave a list empty ([]) or a value null to mean "don't filter on this".
-# The seven keys under "Discovery" map 1:1 to the GrepJob search, so they use
+# The nine keys under "Discovery" map 1:1 to the GrepJob search, so they use
 # GrepJob's exact value vocabularies (listed in each comment). `intent` and
 # `dealbreakers` are never sent to the search — the agent applies them when
 # selecting results (intent ranks, dealbreakers veto).
@@ -53,24 +53,31 @@ seniority:
   - "mid level"
   - "senior"
 
-# Role sub-categories. Valid values: Backend, Full Stack, Frontend, AI & ML,
-# DevOps, Data Engineering, Data Science, Security, Testing, Embedded, Mobile, Gaming
+# Role sub-categories. Valid values: Backend, Full Stack, Frontend,
+# Product Engineering, Growth Engineering, DevOps, Site Reliability,
+# Data Engineering, Data Science, ML Engineering, AI Applications, AI Research,
+# Security, Testing, Embedded, Mobile, Gaming, Robotics, Forward Deployed,
+# Solutions Engineering   ("AI & ML" was retired — use the three AI/ML values)
 # Pick generously — categories are auto-tagged and a job carrying only a
-# neighboring tag (e.g. "Frontend" on a product-eng role) is otherwise invisible.
+# neighboring tag (e.g. "Product Engineering" on a full-stack role) is
+# otherwise invisible.
 sub_category:
   - "Backend"
   - "Full Stack"
   - "Frontend"
+  - "Product Engineering"
 
 # Tech stack — leave [] unless a stack is a genuine dealbreaker. A job must
 # explicitly list one of these tags to appear at all, and roughly 1 in 10
 # listings has no tech-stack tags extracted, so every entry here silently
 # shrinks the pool (in practice ~30% of an otherwise-matching slice). Stack
 # *preferences* belong in `intent`, where they rank jobs instead of deleting
-# them. Valid values include: Python, TypeScript, JavaScript, React, Node.js,
-# Go, Java, Rust, C++, C#, Ruby, Kotlin, Scala, AWS, GCP, Azure, Kubernetes,
-# Docker, Terraform, PostgreSQL, MySQL, MongoDB, Redis, GraphQL, Kafka, Spark,
-# PyTorch, TensorFlow … (50+ total)
+# them. Valid values (exact spelling matters): Python, TypeScript, JavaScript,
+# React, Node.js, Go, Java, Rust, C++, C#, C, Ruby, Kotlin, Scala, AWS, GCP,
+# Google Cloud, Azure, Kubernetes, Docker, Terraform, PostgreSQL, MySQL,
+# MongoDB, Redis, GraphQL, gRPC, Apache Kafka, Apache Spark, Apache Airflow,
+# PyTorch, TensorFlow, SQL, Linux, Snowflake, Databricks, Elasticsearch,
+# Angular, Vue.js … (50 total)
 tech_stack_filters: []
 
 # Minimum annual salary in USD. Use null for no salary floor.
@@ -89,6 +96,19 @@ include_jobs_without_salary: true
 # unknowns, and it would hide ~3 in 4 jobs — if you don't need sponsorship,
 # the correct value is null.
 sponsors_h1b_filter: null
+
+# Company headcount buckets (LinkedIn ranges). Leave [] unless a size is a
+# genuine dealbreaker — company data is enrichment that some listings lack, so
+# any value here also drops jobs whose company is unmatched. A *preference* for
+# small companies belongs in `intent`. Valid values: RANGE_1_10, RANGE_11_50,
+# RANGE_51_200, RANGE_201_500, RANGE_501_1000, RANGE_1001_5000,
+# RANGE_5001_10000, RANGE_10000_PLUS
+company_size: []
+
+# Latest funding stage of the company. Same caveat as company_size.
+# Valid values: PRE_SEED, SEED, SERIES_A, SERIES_B, SERIES_C, SERIES_D,
+# SERIES_E_PLUS, PRIVATE_EQUITY, PUBLIC, OTHER
+funding_stage: []
 
 # ── Filtering: applied after discovery, on your machine ──────────────────────
 

@@ -106,6 +106,7 @@ Store as `dealbreakers`, their words. "None really" is a fine answer — write a
 
 - A stack requirement stated in hard terms ("I only want Rust jobs") → ALSO write `tech_stack_filters`. The filter enforces it on tagged jobs; the dealbreaker text lets ranking catch matching jobs whose tags were missed. Warn them about the cost: a stack filter drops every job that doesn't explicitly tag it, including the ~10% of listings with no stack tags at all. If they merely *mention* liked technologies in intent, `tech_stack_filters` stays `[]`.
 - A visa need ("I need sponsorship") → `sponsors_h1b_filter: true`. **Never write `false`** — sponsorship data is company-level filing-record matching where "no record" means unknown, so `false` doesn't mean "no sponsorship hassle", it means an arbitrary ~26% slice of jobs. Users who don't need sponsorship get `null`.
+- An absolute company size or stage exclusion ("I'm done with big companies", "only funded startups") → `company_size` / `funding_stage` (vocabularies in the example file). These are hard filters and company data is enrichment that some listings lack, so only write them for a true veto; a *preference* for small companies stays in `intent`, where it ranks instead of deleting.
 
 ### Turn 3 — location (multiple choice, seeded from the resume)
 
@@ -137,10 +138,11 @@ Seniority and sub-category need no user input; present them as a one-line confir
 Rules for the seeds:
 
 - `seniority`: infer from years of experience (0–2 entry, 3–5 mid, 5–8 senior, 8+ staff+) but **always include both adjacent bands at a boundary** (5 yrs → mid level + senior).
-- `sub_category`: seed from recent titles, then widen by one neighbor (backend title → Backend + Full Stack + Frontend). Never write a single-category list without the user insisting.
+- `sub_category`: seed from recent titles, then widen by one neighbor (backend title → Backend + Full Stack + Product Engineering; ML title → ML Engineering + AI Applications + Backend). Use the 20-value vocabulary in the example file — `AI & ML` was retired and is rejected by the search. Never write a single-category list without the user insisting.
+- `company_size` / `funding_stage`: `[]` unless Turn 2 produced a hard size/stage veto.
 - `intent`/`dealbreakers` stay in the user's words — don't pad them with resume-derived stack they never mentioned; the find-jobs flow already has their profile for that context.
 
-Keep the YAML keys exactly as in the example (`intent`, `dealbreakers`, `location`, `seniority`, `sub_category`, `tech_stack_filters`, `min_salary`, `include_jobs_without_salary`, `sponsors_h1b_filter`, plus `avoid_companies`, `preferred_companies`, `default_application_answers`, `notes_for_autofill`) — the seven Discovery keys pass straight through to `mcp__grepjob__search_jobs`; `intent` and `dealbreakers` never do (the agent applies them when selecting results: intent ranks, dealbreakers veto). The valid value vocabularies are listed in the example file's comments. Write the populated YAML to `searchPath`.
+Keep the YAML keys exactly as in the example (`intent`, `dealbreakers`, `location`, `seniority`, `sub_category`, `tech_stack_filters`, `min_salary`, `include_jobs_without_salary`, `sponsors_h1b_filter`, `company_size`, `funding_stage`, plus `avoid_companies`, `preferred_companies`, `default_application_answers`, `notes_for_autofill`) — the nine Discovery keys pass straight through to `mcp__grepjob__search_jobs`; `intent` and `dealbreakers` never do (the agent applies them when selecting results: intent ranks, dealbreakers veto). The valid value vocabularies are listed in the example file's comments. Write the populated YAML to `searchPath`.
 
 ## Applications log
 
